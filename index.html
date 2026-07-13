@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Profit & Break-Even Calculator</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8dee9;
+      --accent: #2563eb;
+      --positive: #087443;
+      --negative: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 36px auto;
+      padding: 0 18px 40px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .purchase-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr auto;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #344054;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 11px 15px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .add-btn, .calc-btn {
+      background: var(--accent);
+      color: white;
+    }
+
+    .remove-btn {
+      background: #eef2f6;
+      color: #344054;
+      min-width: 42px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .reset-btn {
+      background: #eef2f6;
+      color: #344054;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .result-box {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 15px;
+      background: #fafbfc;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .result-value {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .positive { color: var(--positive); }
+    .negative { color: var(--negative); }
+
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 760px) {
+      .purchase-row,
+      .grid-3,
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .purchase-row .remove-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Stock Profit & Break-Even Calculator</h1>
+    <div class="subtitle">
+      Enter each purchase separately. The calculator includes purchase commissions and one final sale commission.
+    </div>
+
+    <div class="card">
+      <div class="section-title">Purchases</div>
+      <div id="purchaseRows"></div>
+      <button class="add-btn" type="button" onclick="addPurchaseRow()">+ Add Purchase</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Sale Assumptions</div>
+      <div class="grid-3">
+        <div>
+          <label for="buyCommission">Commission per Purchase</label>
+          <input id="buyCommission" type="number" step="0.01" value="6.95" />
+        </div>
+        <div>
+          <label for="sellCommission">Commission on Final Sale</label>
+          <input id="sellCommission" type="number" step="0.01" value="6.95" />
+        </div>
+        <div>
+          <label for="sellPrice">Selling Price per Share</label>
+          <input id="sellPrice" type="number" step="0.01" placeholder="Optional" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="calc-btn" type="button" onclick="calculate()">Calculate</button>
+        <button class="reset-btn" type="button" onclick="resetCalculator()">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Results</div>
+      <div class="results">
+        <div class="result-box">
+          <div class="result-label">Total Shares</div>
+          <div class="result-value" id="totalShares">0</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Average Purchase Price</div>
+          <div class="result-value" id="avgPurchase">$0.00</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Average Cost Including Buy Commissions</div>
+          <div class="result-value" id="avgCost">$0.00</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Total Cost Including Buy Commissions</div>
+          <div class="result-value" id="totalCost">$0.00</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Break-Even Selling Price per Share</div>
+          <div class="result-value" id="breakEven">$0.00</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Net Profit / Loss</div>
+          <div class="result-value" id="profit">$0.00</div>
+        </div>
+      </div>
+      <div class="note">
+        Break-even price = (purchase value + all purchase commissions + final sale commission) ÷ total shares.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rowsContainer = document.getElementById("purchaseRows");
+
+    function money(value) {
+      return new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency: "CAD",
+        minimumFractionDigits: 2
+      }).format(value || 0);
+    }
+
+    function addPurchaseRow(price = "", quantity = 1, commissionCount = 1) {
+      const row = document.createElement("div");
+      row.className = "purchase-row";
+      row.innerHTML = `
+        <div>
+          <label>Purchase Price per Share</label>
+          <input class="price" type="number" step="0.01" min="0" value="${price}" placeholder="e.g. 1078" />
+        </div>
+        <div>
+          <label>Number of Shares</label>
+          <input class="quantity" type="number" step="1" min="0" value="${quantity}" />
+        </div>
+        <div>
+          <label>Purchase Transactions</label>
+          <input class="commission-count" type="number" step="1" min="0" value="${commissionCount}" />
+        </div>
+        <button class="remove-btn" type="button" title="Remove purchase" onclick="this.parentElement.remove()">×</button>
+      `;
+      rowsContainer.appendChild(row);
+    }
+
+    function calculate() {
+      const rows = [...document.querySelectorAll(".purchase-row")];
+      const buyCommission = parseFloat(document.getElementById("buyCommission").value) || 0;
+      const sellCommission = parseFloat(document.getElementById("sellCommission").value) || 0;
+      const sellPriceInput = document.getElementById("sellPrice").value.trim();
+
+      let totalShares = 0;
+      let purchaseValue = 0;
+      let purchaseTransactionCount = 0;
+
+      rows.forEach(row => {
+        const price = parseFloat(row.querySelector(".price").value) || 0;
+        const quantity = parseFloat(row.querySelector(".quantity").value) || 0;
+        const commissionCount = parseFloat(row.querySelector(".commission-count").value) || 0;
+
+        totalShares += quantity;
+        purchaseValue += price * quantity;
+        purchaseTransactionCount += commissionCount;
+      });
+
+      if (totalShares <= 0) {
+        alert("Please enter at least one purchased share.");
+        return;
+      }
+
+      const totalBuyCommissions = purchaseTransactionCount * buyCommission;
+      const totalCost = purchaseValue + totalBuyCommissions;
+      const avgPurchase = purchaseValue / totalShares;
+      const avgCost = totalCost / totalShares;
+      const breakEven = (totalCost + sellCommission) / totalShares;
+
+      let profit = 0;
+      let hasSalePrice = sellPriceInput !== "";
+      if (hasSalePrice) {
+        const sellPrice = parseFloat(sellPriceInput) || 0;
+        profit = sellPrice * totalShares - sellCommission - totalCost;
+      }
+
+      document.getElementById("totalShares").textContent = totalShares.toLocaleString();
+      document.getElementById("avgPurchase").textContent = money(avgPurchase);
+      document.getElementById("avgCost").textContent = money(avgCost);
+      document.getElementById("totalCost").textContent = money(totalCost);
+      document.getElementById("breakEven").textContent = money(breakEven);
+
+      const profitEl = document.getElementById("profit");
+      profitEl.textContent = hasSalePrice ? money(profit) : "Enter sale price";
+      profitEl.classList.remove("positive", "negative");
+      if (hasSalePrice) {
+        profitEl.classList.add(profit >= 0 ? "positive" : "negative");
+      }
+    }
+
+    function resetCalculator() {
+      rowsContainer.innerHTML = "";
+      document.getElementById("buyCommission").value = "6.95";
+      document.getElementById("sellCommission").value = "6.95";
+      document.getElementById("sellPrice").value = "";
+      addPurchaseRow();
+      addPurchaseRow();
+      addPurchaseRow();
+      calculate();
+    }
+
+    addPurchaseRow("1078", 1, 1);
+    addPurchaseRow("1049", 1, 1);
+    addPurchaseRow("992", 1, 1);
+    calculate();
+  </script>
+</body>
+</html>
