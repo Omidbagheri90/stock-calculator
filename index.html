@@ -34,7 +34,7 @@
 
 <div id="stockModal" class="modal"><div class="sheet">
 <div class="mhead"><h3 id="stockTitle">Add Stock</h3><button class="secondary" onclick="closeStock()">Close</button></div>
-<div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01" min="0"><div class="sub">Saving this price updates the same ticker in every account.</div></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
+<div class="form"><div><label>Ticker</label><input id="ticker" oninput="syncTickerPrice()"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01" min="0"><div id="priceHelp" class="sub">Enter a price only for a new ticker. Existing ticker prices are filled automatically and shared across all accounts.</div></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
 <div class="rows"><h3>Purchases</h3><div id="purchaseRows"></div><button class="secondary" onclick="addPurchase()">+ Add Purchase</button></div>
 <div class="rows"><h3>Sales</h3><div id="saleRows"></div><button class="secondary" onclick="addSale()">+ Add Sale</button></div>
 <div class="mact"><button class="secondary" onclick="closeStock()">Cancel</button><button class="primary" onclick="saveStock()">Save Stock</button></div>
@@ -99,7 +99,57 @@ function renderStocks(){let q=search.value.trim().toLowerCase(),ss=(acc()?.stock
 function card(s){let c=calc(s),t=c.realized+(c.complete?0:c.unrealized),cl=t>=0?"positive":"negative";return `<div class="card stock"><div class="head"><div><div class="ticker">${esc(s.ticker)}</div><div class="name">${esc(s.name||"")}</div></div><div class="chip ${cl}">${money(t)}</div></div><div class="grid"><div><div class="sl">Bought</div><div class="sv">${fmt(c.bought)}</div></div><div><div class="sl">Sold</div><div class="sv">${fmt(c.sold)}</div></div><div><div class="sl">Remaining</div><div class="sv">${fmt(c.remaining)}</div></div><div><div class="sl">Current Price</div><div class="sv">${money(Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0))}</div></div><div><div class="sl">Avg Buy / Share</div><div class="sv">${money(c.avgBuy)}</div></div><div><div class="sl">Total Purchase Cost</div><div class="sv">${money(c.totalCost)}</div></div><div><div class="sl">Break-Even</div><div class="sv">${c.complete?"—":money(c.breakEven)}</div></div><div><div class="sl">Realized</div><div class="sv ${c.realized>=0?"positive":"negative"}">${money(c.realized)}</div></div><div><div class="sl">Unrealized</div><div class="sv ${c.unrealized>=0?"positive":"negative"}">${c.complete?"—":money(c.unrealized)}</div></div></div><div class="actions">${c.complete?"":`<button class="secondary" onclick="quickPrice('${s.id}')">Update Price</button>`}<button class="secondary" onclick="openStock('${s.id}')">${c.complete?"View / Edit":"Buy / Sell / Edit"}</button><button class="danger" onclick="deleteStock('${s.id}')">Delete</button></div></div>`}
 function renderSummary(){let av=0,ac=0,u=0,r=0;(acc()?.stocks||[]).forEach(s=>{let c=calc(s);av+=c.activeValue;ac+=c.activeCost;u+=c.complete?0:c.unrealized;r+=c.realized});setM("activeValue",money(av));setM("activeCost",money(ac));setM("unrealized",money(u),u);setM("realized",money(r),r);setM("totalProfit",money(u+r),u+r)}
 function setM(id,t,s=null){let e=document.getElementById(id);e.textContent=t;e.classList.remove("positive","negative");if(s!==null)e.classList.add(s>=0?"positive":"negative")}
-function openStock(id=null){editingId=id;purchaseRows.innerHTML="";saleRows.innerHTML="";if(id){let s=acc().stocks.find(x=>x.id===id);stockTitle.textContent="Update Stock";ticker.value=s.ticker;company.value=s.name||"";currentPrice.value=Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0);saleCommission.value=s.saleCommission??state.settings.defaultSell;s.purchases.forEach(addPurchase);(s.sales||[]).forEach(addSale)}else{stockTitle.textContent="Add Stock";ticker.value="";company.value="";currentPrice.value="";saleCommission.value=state.settings.defaultSell;addPurchase()}stockModal.classList.add("open")}
+function openStock(id=null){
+  editingId=id;
+  purchaseRows.innerHTML="";
+  saleRows.innerHTML="";
+  currentPrice.dataset.sharedTicker="";
+
+  if(id){
+    let s=acc().stocks.find(x=>x.id===id);
+    stockTitle.textContent="Update Stock";
+    ticker.value=s.ticker;
+    company.value=s.name||"";
+    const t=(s.ticker||"").toUpperCase();
+    const existingPrice=(state.sharedPrices||{})[t];
+    currentPrice.value=existingPrice!==undefined?existingPrice:(s.currentPrice??"");
+    currentPrice.dataset.sharedTicker=t;
+    priceHelp.textContent=`Shared ${t} price. Changing it here will update ${t} in every account.`;
+    saleCommission.value=s.saleCommission??state.settings.defaultSell;
+    s.purchases.forEach(addPurchase);
+    (s.sales||[]).forEach(addSale);
+  }else{
+    stockTitle.textContent="Add Stock";
+    ticker.value="";
+    company.value="";
+    currentPrice.value="";
+    priceHelp.textContent="Enter a price only for a new ticker. Existing ticker prices are filled automatically and shared across all accounts.";
+    saleCommission.value=state.settings.defaultSell;
+    addPurchase();
+  }
+
+  stockModal.classList.add("open");
+}
+function syncTickerPrice(){
+  const t=ticker.value.trim().toUpperCase();
+  const prices=state.sharedPrices||{};
+  const hasShared=Object.prototype.hasOwnProperty.call(prices,t);
+
+  if(hasShared){
+    currentPrice.value=prices[t];
+    currentPrice.dataset.sharedTicker=t;
+    priceHelp.textContent=`Shared ${t} price loaded automatically. Change it only when you want to update ${t} in every account.`;
+  }else{
+    const previous=currentPrice.dataset.sharedTicker||"";
+    if(previous && previous!==t){
+      currentPrice.value="";
+      currentPrice.dataset.sharedTicker="";
+    }
+    priceHelp.textContent=t
+      ? `No shared price exists for ${t}. Enter it once; future ${t} positions will use it automatically.`
+      : "Enter a price only for a new ticker. Existing ticker prices are filled automatically and shared across all accounts.";
+  }
+}
 function closeStock(){stockModal.classList.remove("open");editingId=null}
 function addPurchase(p={}){addRow("purchaseRows","Buy",p,state.settings.defaultBuy)}
 function addSale(p={}){addRow("saleRows","Sell",p,state.settings.defaultSell)}
@@ -120,18 +170,60 @@ function updateRowTotal(row){
 }
 function collect(id){return [...document.querySelectorAll(`#${id} .row`)].map(r=>({price:Number(r.querySelector(".rp").value),quantity:Number(r.querySelector(".rq").value),commission:Number(r.querySelector(".rc").value)})).filter(x=>x.price>=0&&x.quantity>0&&x.commission>=0)}
 function saveStock(){
-  let t=ticker.value.trim().toUpperCase(),p=collect("purchaseRows"),s=collect("saleRows"),enteredPrice=Number(currentPrice.value);
+  const t=ticker.value.trim().toUpperCase();
+  const p=collect("purchaseRows");
+  const s=collect("saleRows");
+  const priceText=currentPrice.value.trim();
+
   if(!t)return alert("Enter a ticker.");
   if(!p.length)return alert("Enter at least one purchase.");
-  let b=p.reduce((x,y)=>x+y.quantity,0),sd=s.reduce((x,y)=>x+y.quantity,0);
-  if(sd>b+1e-9)return alert("Sold shares cannot exceed purchased shares.");
-  if(!Number.isFinite(enteredPrice)||enteredPrice<0)return alert("Enter a valid current price.");
+
+  const bought=p.reduce((x,y)=>x+y.quantity,0);
+  const sold=s.reduce((x,y)=>x+y.quantity,0);
+  if(sold>bought+1e-9)return alert("Sold shares cannot exceed purchased shares.");
+
   if(!state.sharedPrices)state.sharedPrices={};
-  state.sharedPrices[t]=enteredPrice;
-  state.accounts.forEach(a=>(a.stocks||[]).forEach(st=>{if((st.ticker||"").toUpperCase()===t)st.currentPrice=enteredPrice;}));
-  let o={id:editingId||uid(),ticker:t,name:company.value.trim(),currentPrice:enteredPrice,saleCommission:Number(saleCommission.value)||0,purchases:p,sales:s};
-  if(editingId){let i=acc().stocks.findIndex(x=>x.id===editingId);acc().stocks[i]=o}else acc().stocks.push(o);
-  save();closeStock();render();
+  const hasExistingPrice=Object.prototype.hasOwnProperty.call(state.sharedPrices,t);
+
+  let sharedPrice;
+  if(priceText!==""){
+    sharedPrice=Number(priceText);
+    if(!Number.isFinite(sharedPrice)||sharedPrice<0){
+      return alert("Enter a valid current price.");
+    }
+    state.sharedPrices[t]=sharedPrice;
+
+    // A deliberate price change updates the same ticker in every account.
+    state.accounts.forEach(a=>(a.stocks||[]).forEach(st=>{
+      if((st.ticker||"").toUpperCase()===t)st.currentPrice=sharedPrice;
+    }));
+  }else if(hasExistingPrice){
+    // Keep the existing shared price; do not replace it with zero.
+    sharedPrice=Number(state.sharedPrices[t]);
+  }else{
+    return alert(`Enter the current price for new ticker ${t}. You only need to define it once.`);
+  }
+
+  const o={
+    id:editingId||uid(),
+    ticker:t,
+    name:company.value.trim(),
+    currentPrice:sharedPrice,
+    saleCommission:Number(saleCommission.value)||0,
+    purchases:p,
+    sales:s
+  };
+
+  if(editingId){
+    const i=acc().stocks.findIndex(x=>x.id===editingId);
+    acc().stocks[i]=o;
+  }else{
+    acc().stocks.push(o);
+  }
+
+  save();
+  closeStock();
+  render();
 }
 function quickPrice(id){
   const s=acc().stocks.find(x=>x.id===id);
