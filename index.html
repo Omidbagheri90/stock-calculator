@@ -1,21 +1,1055 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f172a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Stock Tracker">
-<title>Stock Portfolio Tracker</title>
-<style>
-:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#d9e0ea;--blue:#2563eb;--green:#087443;--red:#b42318;--greenbg:#ecfdf3;--redbg:#fef3f2} [data-theme=dark]{--bg:#0b1220;--card:#111827;--text:#f8fafc;--muted:#9ca3af;--line:#2b3648;--blue:#60a5fa;--green:#34d399;--red:#fb7185;--greenbg:#0d2a22;--redbg:#32151a}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}.app{max-width:1080px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 14px 42px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}h1{margin:0;font-size:32px}.sub{color:var(--muted);font-size:14px;margin-top:4px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 28px rgba(15,23,42,.08)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric{padding:17px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800;letter-spacing:.05em}.value{font-size:23px;font-weight:850;margin-top:7px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}.toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:13px;margin-bottom:15px}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--text);font-size:15px}button{border:0;border-radius:11px;padding:12px 14px;font-weight:800;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.danger{background:var(--redbg);color:var(--red)}.icon{width:44px;height:44px;padding:0;font-size:20px}.holdings{display:grid;gap:13px}.stock{padding:16px}.stockhead{display:flex;justify-content:space-between;gap:10px}.ticker{font-size:22px;font-weight:900}.name{font-size:13px;color:var(--muted)}.chip{padding:8px 10px;border-radius:999px;font-size:13px;font-weight:850}.chip.positive{background:var(--greenbg)}.chip.negative{background:var(--redbg)}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px}.small{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800}.big{font-size:15px;font-weight:850;margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.6);z-index:10;align-items:flex-end;justify-content:center;padding:12px}.modal.open{display:flex}.sheet{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--card);border-radius:20px;padding:17px;border:1px solid var(--line)}.mhead{display:flex;justify-content:space-between;align-items:center}.mtitle{font-size:21px;font-weight:900}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px 2px}.purchases{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}.prow{display:grid;grid-template-columns:1.2fr .8fr .8fr auto;gap:8px;align-items:end;margin-bottom:8px}.empty{text-align:center;color:var(--muted);padding:34px;border:1px dashed var(--line);border-radius:15px}.footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.note{font-size:12px;color:var(--muted);margin-top:10px}@media(max-width:850px){.summary{grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.grid{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.prow{grid-template-columns:1fr 1fr}.prow .wide{grid-column:1/-1}.value{font-size:20px}}
-</style></head>
-<body><div class="app">
-<div class="top"><div><h1>Stock Portfolio</h1><div class="sub">Break-even, commissions, and profit — saved on this device.</div></div><button class="secondary icon" onclick="toggleTheme()">◐</button></div>
-<div class="summary"><div class="card metric"><div class="label">Portfolio Value</div><div class="value" id="pv">$0.00</div></div><div class="card metric"><div class="label">Total Cost</div><div class="value" id="pc">$0.00</div></div><div class="card metric"><div class="label">Net Profit/Loss</div><div class="value" id="pp">$0.00</div></div><div class="card metric"><div class="label">Return</div><div class="value" id="pr">0.00%</div></div></div>
-<div class="card toolbar"><input id="search" placeholder="Search ticker or company" oninput="render()"><button class="secondary" onclick="openSettings()">Settings</button><button class="primary" onclick="openStock()">+ Add Stock</button></div>
-<div id="holdings" class="holdings"></div>
-<div class="footer"><button class="secondary" onclick="exportData()">Export Backup</button><button class="secondary" onclick="document.getElementById('import').click()">Import Backup</button><input id="import" type="file" accept=".json" hidden onchange="importData(event)"><button class="danger" onclick="clearAll()">Clear All</button></div><div class="note">Prices are entered manually. Data remains in your browser.</div>
-</div>
-<div id="stockModal" class="modal"><div class="sheet"><div class="mhead"><div class="mtitle" id="modalTitle">Add Stock</div><button class="secondary" onclick="closeStock()">Close</button></div><div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="current" type="number" step="0.01"></div><div><label>Sale Commission</label><input id="sellComm" type="number" step="0.01"></div></div><div class="purchases"><div class="mtitle" style="font-size:16px">Purchases</div><div id="rows"></div><button class="secondary" onclick="addRow()">+ Add Purchase</button></div><div class="actions" style="justify-content:flex-end"><button class="secondary" onclick="closeStock()">Cancel</button><button class="primary" onclick="saveStock()">Save Stock</button></div></div></div>
-<div id="settingsModal" class="modal"><div class="sheet"><div class="mhead"><div class="mtitle">Settings</div><button class="secondary" onclick="closeSettings()">Close</button></div><div class="form"><div><label>Currency</label><select id="currency"><option>CAD</option><option>USD</option><option>EUR</option><option>GBP</option></select></div><div><label>Default Buy Commission</label><input id="buyDefault" type="number" step="0.01"></div><div><label>Default Sale Commission</label><input id="sellDefault" type="number" step="0.01"></div></div><div class="actions" style="justify-content:flex-end"><button class="primary" onclick="saveSettings()">Save Settings</button></div></div></div>
-<script>
-const KEY='stockPortfolioTrackerV2',THEME='stockPortfolioTheme';let editing=null;function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}function defaults(){return{settings:{currency:'CAD',buy:6.95,sell:6.95},stocks:[{id:uid(),ticker:'MU',name:'Micron Technology',current:1048.93,sellCommission:6.95,purchases:[{price:1078,qty:1,commission:6.95},{price:1049,qty:1,commission:6.95},{price:992,qty:1,commission:6.95}]}]}}let state=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||defaults()}catch{return defaults()}})();function save(){localStorage.setItem(KEY,JSON.stringify(state))}function money(v){return new Intl.NumberFormat('en-CA',{style:'currency',currency:state.settings.currency}).format(Number(v)||0)}function calc(s){let shares=0,pv=0,bc=0;s.purchases.forEach(p=>{shares+=Number(p.qty)||0;pv+=(Number(p.price)||0)*(Number(p.qty)||0);bc+=Number(p.commission)||0});let cost=pv+bc,be=shares?(cost+Number(s.sellCommission||0))/shares:0,value=shares*Number(s.current||0),profit=value-Number(s.sellCommission||0)-cost,ret=cost?profit/cost*100:0;return{shares,cost,be,value,profit,ret,avg:shares?pv/shares:0,avgCost:shares?cost/shares:0}}function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function render(){let q=document.getElementById('search').value.toLowerCase(),h=document.getElementById('holdings'),items=state.stocks.filter(s=>s.ticker.toLowerCase().includes(q)||(s.name||'').toLowerCase().includes(q));h.innerHTML=items.length?items.map(s=>{let c=calc(s),cl=c.profit>=0?'positive':'negative';return`<div class="card stock"><div class="stockhead"><div><div class="ticker">${esc(s.ticker)}</div><div class="name">${esc(s.name||'No company name')}</div></div><div class="chip ${cl}">${money(c.profit)} · ${c.ret.toFixed(2)}%</div></div><div class="grid"><div><div class="small">Shares</div><div class="big">${c.shares}</div></div><div><div class="small">Current Price</div><div class="big">${money(s.current)}</div></div><div><div class="small">Average Buy</div><div class="big">${money(c.avg)}</div></div><div><div class="small">Average Cost</div><div class="big">${money(c.avgCost)}</div></div><div><div class="small">Break-Even</div><div class="big">${money(c.be)}</div></div><div><div class="small">Market Value</div><div class="big">${money(c.value)}</div></div></div><div class="actions"><button class="secondary" onclick="quickPrice('${s.id}')">Update Price</button><button class="secondary" onclick="openStock('${s.id}')">Edit</button><button class="danger" onclick="del('${s.id}')">Delete</button></div></div>`}).join(''):'<div class="empty">No holdings found.</div>';summary()}function summary(){let v=0,cost=0,p=0;state.stocks.forEach(s=>{let x=calc(s);v+=x.value;cost+=x.cost;p+=x.profit});let r=cost?p/cost*100:0;document.getElementById('pv').textContent=money(v);document.getElementById('pc').textContent=money(cost);setSign('pp',money(p),p);setSign('pr',r.toFixed(2)+'%',r)}function setSign(id,t,v){let e=document.getElementById(id);e.textContent=t;e.classList.remove('positive','negative');e.classList.add(v>=0?'positive':'negative')}function addRow(p={}){let d=document.createElement('div');d.className='prow';d.innerHTML=`<div class="wide"><label>Price per Share</label><input class="price" type="number" step="0.01" value="${p.price??''}"></div><div><label>Shares</label><input class="qty" type="number" step="0.0001" value="${p.qty??1}"></div><div><label>Commission</label><input class="comm" type="number" step="0.01" value="${p.commission??state.settings.buy}"></div><button class="danger" onclick="this.parentElement.remove()">Remove</button>`;document.getElementById('rows').appendChild(d)}function openStock(id=null){editing=id;document.getElementById('rows').innerHTML='';if(id){let s=state.stocks.find(x=>x.id===id);document.getElementById('modalTitle').textContent='Edit Stock';ticker.value=s.ticker;company.value=s.name||'';current.value=s.current;sellComm.value=s.sellCommission;s.purchases.forEach(addRow)}else{document.getElementById('modalTitle').textContent='Add Stock';ticker.value='';company.value='';current.value='';sellComm.value=state.settings.sell;addRow()}stockModal.classList.add('open')}function closeStock(){stockModal.classList.remove('open');editing=null}function saveStock(){let t=ticker.value.trim().toUpperCase(),ps=[...document.querySelectorAll('.prow')].map(r=>({price:Number(r.querySelector('.price').value),qty:Number(r.querySelector('.qty').value),commission:Number(r.querySelector('.comm').value)})).filter(p=>p.qty>0&&p.price>=0&&p.commission>=0);if(!t)return alert('Enter a ticker.');if(!ps.length)return alert('Add a valid purchase.');let s={id:editing||uid(),ticker:t,name:company.value.trim(),current:Number(current.value)||0,sellCommission:Number(sellComm.value)||0,purchases:ps};if(editing)state.stocks[state.stocks.findIndex(x=>x.id===editing)]=s;else state.stocks.push(s);save();closeStock();render()}function quickPrice(id){let s=state.stocks.find(x=>x.id===id),v=prompt(`Enter current price for ${s.ticker}:`,s.current);if(v===null)return;v=Number(v);if(!Number.isFinite(v)||v<0)return alert('Enter a valid price.');s.current=v;save();render()}function del(id){let s=state.stocks.find(x=>x.id===id);if(confirm(`Delete ${s.ticker}?`)){state.stocks=state.stocks.filter(x=>x.id!==id);save();render()}}function openSettings(){currency.value=state.settings.currency;buyDefault.value=state.settings.buy;sellDefault.value=state.settings.sell;settingsModal.classList.add('open')}function closeSettings(){settingsModal.classList.remove('open')}function saveSettings(){state.settings={currency:currency.value,buy:Number(buyDefault.value)||0,sell:Number(sellDefault.value)||0};save();closeSettings();render()}function exportData(){let b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='stock-portfolio-backup.json';a.click();URL.revokeObjectURL(u)}function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.settings||!Array.isArray(x.stocks))throw 0;state=x;save();render();alert('Backup imported.')}catch{alert('Invalid backup file.')}};r.readAsText(f);e.target.value=''}function clearAll(){if(confirm('Delete all saved data?')){state=defaults();save();render()}}function toggleTheme(){let n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem(THEME,n)}document.documentElement.setAttribute('data-theme',localStorage.getItem(THEME)||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));render();
-</script></body></html>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Stock Tracker" />
+  <title>Stock Portfolio Tracker</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: rgba(255,255,255,.95);
+      --text: #172033;
+      --muted: #667085;
+      --line: #d9e0ea;
+      --accent: #2563eb;
+      --green: #087443;
+      --green-bg: #ecfdf3;
+      --red: #b42318;
+      --red-bg: #fef3f2;
+      --shadow: 0 12px 30px rgba(15,23,42,.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1220;
+      --panel: rgba(17,24,39,.96);
+      --text: #f8fafc;
+      --muted: #9ca3af;
+      --line: #2b3648;
+      --accent: #60a5fa;
+      --green: #34d399;
+      --green-bg: #0d2a22;
+      --red: #fb7185;
+      --red-bg: #32151a;
+      --shadow: 0 12px 30px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: calc(18px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px,4vw,38px);
+      letter-spacing: -.03em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric { padding: 18px; }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .positive { color: var(--green) !important; }
+    .negative { color: var(--red) !important; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.14);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 15px;
+      font-weight: 750;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .primary { background: var(--accent); color: white; }
+    .secondary { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .danger { background: var(--red-bg); color: var(--red); }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin: 24px 2px 12px;
+    }
+
+    .section-title {
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .holdings { display: grid; gap: 14px; }
+    .stock-card { padding: 17px; }
+
+    .stock-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ticker {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: .03em;
+    }
+
+    .stock-name {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .profit-chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .profit-chip.positive { background: var(--green-bg); }
+    .profit-chip.negative { background: var(--red-bg); }
+
+    .stock-grid {
+      display: grid;
+      grid-template-columns: repeat(6,1fr);
+      gap: 10px;
+    }
+
+    .sold-grid {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      gap: 10px;
+    }
+
+    .small-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .small-value {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .stock-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.58);
+      z-index: 20;
+      align-items: end;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-sheet {
+      width: min(760px,100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal-title {
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--muted);
+      margin: 0 0 6px 2px;
+    }
+
+    .purchase-list {
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .purchase-row {
+      display: grid;
+      grid-template-columns: 1.3fr .8fr .8fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: end;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 36px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+    }
+
+    .footer-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .summary { grid-template-columns: repeat(2,1fr); }
+      .stock-grid, .sold-grid { grid-template-columns: repeat(3,1fr); }
+    }
+
+    @media (max-width: 650px) {
+      .app { padding-left: 12px; padding-right: 12px; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar input { grid-column: 1 / -1; }
+      .summary { grid-template-columns: 1fr 1fr; }
+      .metric { padding: 15px; }
+      .metric-value { font-size: 19px; }
+      .stock-grid, .sold-grid { grid-template-columns: repeat(2,1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+      .purchase-row { grid-template-columns: 1fr 1fr; }
+      .purchase-row .wide { grid-column: 1 / -1; }
+      .purchase-row button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div>
+        <h1>Stock Portfolio</h1>
+        <div class="subtitle">Active holdings and realized profit from sold positions.</div>
+      </div>
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle dark mode">◐</button>
+    </div>
+
+    <section class="summary">
+      <div class="card metric">
+        <div class="metric-label">Active Portfolio Value</div>
+        <div class="metric-value" id="activeValue">$0.00</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-label">Active Cost</div>
+        <div class="metric-value" id="activeCost">$0.00</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-label">Unrealized Profit</div>
+        <div class="metric-value" id="unrealizedProfit">$0.00</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-label">Realized Profit</div>
+        <div class="metric-value" id="realizedProfit">$0.00</div>
+      </div>
+      <div class="card metric">
+        <div class="metric-label">Total Profit</div>
+        <div class="metric-value" id="totalProfit">$0.00</div>
+      </div>
+    </section>
+
+    <section class="card toolbar">
+      <input id="searchInput" type="text" placeholder="Search ticker or company..." oninput="render()" />
+      <button class="secondary" onclick="openSettings()">Settings</button>
+      <button class="primary" onclick="openStockModal()">+ Active Stock</button>
+      <button class="primary" onclick="openSoldModal()">+ Sold Stock</button>
+    </section>
+
+    <div class="section-head">
+      <div>
+        <div class="section-title">Active Holdings</div>
+        <div class="section-note">Only these positions count toward active portfolio value and active cost.</div>
+      </div>
+    </div>
+    <section id="activeHoldings" class="holdings"></section>
+
+    <div class="section-head">
+      <div>
+        <div class="section-title">Sold Positions</div>
+        <div class="section-note">Purchase capital and sale proceeds are excluded from active totals; realized profit remains included.</div>
+      </div>
+    </div>
+    <section id="soldHoldings" class="holdings"></section>
+
+    <div class="footer-tools">
+      <button class="secondary" onclick="exportData()">Export Backup</button>
+      <button class="secondary" onclick="document.getElementById('importFile').click()">Import Backup</button>
+      <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)" />
+      <button class="danger" onclick="clearAll()">Clear All</button>
+    </div>
+
+    <div class="note">Prices are entered manually. All data stays in your browser using local storage.</div>
+  </div>
+
+  <div id="stockModal" class="modal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div class="modal-title" id="stockModalTitle">Add Active Stock</div>
+        <button class="secondary" onclick="closeStockModal()">Close</button>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label>Ticker</label>
+          <input id="tickerInput" placeholder="e.g. MU" maxlength="12" />
+        </div>
+        <div>
+          <label>Company Name</label>
+          <input id="nameInput" placeholder="Optional" />
+        </div>
+        <div>
+          <label>Current Price per Share</label>
+          <input id="currentPriceInput" type="number" step="0.01" min="0" />
+        </div>
+        <div>
+          <label>Sale Commission</label>
+          <input id="saleCommissionInput" type="number" step="0.01" min="0" />
+        </div>
+      </div>
+
+      <div class="purchase-list">
+        <div class="modal-title" style="font-size:16px;">Purchases</div>
+        <div id="purchaseRows"></div>
+        <button class="secondary" onclick="addPurchaseRow()">+ Add Purchase</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeStockModal()">Cancel</button>
+        <button class="primary" onclick="saveStock()">Save Active Stock</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="soldModal" class="modal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div class="modal-title" id="soldModalTitle">Add Sold Stock</div>
+        <button class="secondary" onclick="closeSoldModal()">Close</button>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label>Ticker</label>
+          <input id="soldTickerInput" placeholder="e.g. SNDK" maxlength="12" />
+        </div>
+        <div>
+          <label>Company Name</label>
+          <input id="soldNameInput" placeholder="Optional" />
+        </div>
+        <div>
+          <label>Sale Price per Share</label>
+          <input id="soldPriceInput" type="number" step="0.01" min="0" />
+        </div>
+        <div>
+          <label>Sale Commission</label>
+          <input id="soldSaleCommissionInput" type="number" step="0.01" min="0" />
+        </div>
+      </div>
+
+      <div class="purchase-list">
+        <div class="modal-title" style="font-size:16px;">Original Purchases</div>
+        <div id="soldPurchaseRows"></div>
+        <button class="secondary" onclick="addSoldPurchaseRow()">+ Add Purchase</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeSoldModal()">Cancel</button>
+        <button class="primary" onclick="saveSoldStock()">Save Sold Stock</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsModal" class="modal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div class="modal-title">Portfolio Settings</div>
+        <button class="secondary" onclick="closeSettings()">Close</button>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label>Currency</label>
+          <select id="currencySelect">
+            <option value="CAD">CAD</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+        <div>
+          <label>Default Purchase Commission</label>
+          <input id="defaultBuyCommission" type="number" step="0.01" min="0" />
+        </div>
+        <div>
+          <label>Default Sale Commission</label>
+          <input id="defaultSellCommission" type="number" step="0.01" min="0" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "stockPortfolioTrackerV3";
+    const OLD_STORAGE_KEY = "stockPortfolioTrackerV2";
+    const THEME_KEY = "stockPortfolioTheme";
+
+    let editingActiveId = null;
+    let editingSoldId = null;
+    let state = loadState();
+
+    function uid() {
+      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+    }
+
+    function defaultState() {
+      return {
+        settings: {
+          currency: "CAD",
+          defaultBuyCommission: 6.95,
+          defaultSellCommission: 6.95
+        },
+        stocks: [],
+        soldStocks: []
+      };
+    }
+
+    function loadState() {
+      try {
+        const current = localStorage.getItem(STORAGE_KEY);
+        if (current) return normalizeState(JSON.parse(current));
+
+        const old = localStorage.getItem(OLD_STORAGE_KEY);
+        if (old) {
+          const migrated = normalizeState(JSON.parse(old));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+          return migrated;
+        }
+
+        return defaultState();
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function normalizeState(data) {
+      return {
+        settings: data.settings || defaultState().settings,
+        stocks: Array.isArray(data.stocks) ? data.stocks : [],
+        soldStocks: Array.isArray(data.soldStocks) ? data.soldStocks : []
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency: state.settings.currency,
+        minimumFractionDigits: 2
+      }).format(Number(value) || 0);
+    }
+
+    function calculateActive(stock) {
+      const shares = stock.purchases.reduce((s,p) => s + Number(p.quantity || 0), 0);
+      const purchaseValue = stock.purchases.reduce((s,p) => s + Number(p.price || 0) * Number(p.quantity || 0), 0);
+      const buyCommissions = stock.purchases.reduce((s,p) => s + Number(p.commission || 0), 0);
+      const totalCost = purchaseValue + buyCommissions;
+      const avgPurchase = shares ? purchaseValue / shares : 0;
+      const avgCost = shares ? totalCost / shares : 0;
+      const breakEven = shares ? (totalCost + Number(stock.saleCommission || 0)) / shares : 0;
+      const currentValue = shares * Number(stock.currentPrice || 0);
+      const netValue = currentValue - Number(stock.saleCommission || 0);
+      const profit = netValue - totalCost;
+      const returnPct = totalCost ? profit / totalCost * 100 : 0;
+      return { shares, totalCost, avgPurchase, avgCost, breakEven, currentValue, profit, returnPct };
+    }
+
+    function calculateSold(stock) {
+      const shares = stock.purchases.reduce((s,p) => s + Number(p.quantity || 0), 0);
+      const purchaseValue = stock.purchases.reduce((s,p) => s + Number(p.price || 0) * Number(p.quantity || 0), 0);
+      const buyCommissions = stock.purchases.reduce((s,p) => s + Number(p.commission || 0), 0);
+      const totalCost = purchaseValue + buyCommissions;
+      const grossSale = shares * Number(stock.salePrice || 0);
+      const netSale = grossSale - Number(stock.saleCommission || 0);
+      const profit = netSale - totalCost;
+      const avgPurchase = shares ? purchaseValue / shares : 0;
+      const returnPct = totalCost ? profit / totalCost * 100 : 0;
+      return { shares, totalCost, grossSale, netSale, profit, avgPurchase, returnPct };
+    }
+
+    function render() {
+      renderActive();
+      renderSold();
+      renderSummary();
+    }
+
+    function renderActive() {
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const container = document.getElementById("activeHoldings");
+      const filtered = state.stocks.filter(s =>
+        s.ticker.toLowerCase().includes(search) ||
+        (s.name || "").toLowerCase().includes(search)
+      );
+
+      if (!filtered.length) {
+        container.innerHTML = `<div class="empty">No active holdings found.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(stock => {
+        const c = calculateActive(stock);
+        const cls = c.profit >= 0 ? "positive" : "negative";
+        return `
+          <article class="card stock-card">
+            <div class="stock-head">
+              <div>
+                <div class="ticker">${escapeHtml(stock.ticker)}</div>
+                <div class="stock-name">${escapeHtml(stock.name || "No company name")}</div>
+              </div>
+              <div class="profit-chip ${cls}">${money(c.profit)} · ${c.returnPct.toFixed(2)}%</div>
+            </div>
+
+            <div class="stock-grid">
+              <div><div class="small-label">Shares</div><div class="small-value">${formatNumber(c.shares)}</div></div>
+              <div><div class="small-label">Current Price</div><div class="small-value">${money(stock.currentPrice)}</div></div>
+              <div><div class="small-label">Average Buy</div><div class="small-value">${money(c.avgPurchase)}</div></div>
+              <div><div class="small-label">Average Cost</div><div class="small-value">${money(c.avgCost)}</div></div>
+              <div><div class="small-label">Break-Even</div><div class="small-value">${money(c.breakEven)}</div></div>
+              <div><div class="small-label">Market Value</div><div class="small-value">${money(c.currentValue)}</div></div>
+            </div>
+
+            <div class="stock-actions">
+              <button class="secondary" onclick="quickPrice('${stock.id}')">Update Price</button>
+              <button class="secondary" onclick="openStockModal('${stock.id}')">Edit</button>
+              <button class="secondary" onclick="moveToSold('${stock.id}')">Mark as Sold</button>
+              <button class="danger" onclick="deleteActive('${stock.id}')">Delete</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderSold() {
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const container = document.getElementById("soldHoldings");
+      const filtered = state.soldStocks.filter(s =>
+        s.ticker.toLowerCase().includes(search) ||
+        (s.name || "").toLowerCase().includes(search)
+      );
+
+      if (!filtered.length) {
+        container.innerHTML = `<div class="empty">No sold positions found.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(stock => {
+        const c = calculateSold(stock);
+        const cls = c.profit >= 0 ? "positive" : "negative";
+        return `
+          <article class="card stock-card">
+            <div class="stock-head">
+              <div>
+                <div class="ticker">${escapeHtml(stock.ticker)}</div>
+                <div class="stock-name">${escapeHtml(stock.name || "No company name")}</div>
+              </div>
+              <div class="profit-chip ${cls}">${money(c.profit)} · ${c.returnPct.toFixed(2)}%</div>
+            </div>
+
+            <div class="sold-grid">
+              <div><div class="small-label">Shares Sold</div><div class="small-value">${formatNumber(c.shares)}</div></div>
+              <div><div class="small-label">Average Buy</div><div class="small-value">${money(c.avgPurchase)}</div></div>
+              <div><div class="small-label">Sale Price</div><div class="small-value">${money(stock.salePrice)}</div></div>
+              <div><div class="small-label">Original Cost</div><div class="small-value">${money(c.totalCost)}</div></div>
+              <div><div class="small-label">Gross Sale</div><div class="small-value">${money(c.grossSale)}</div></div>
+              <div><div class="small-label">Net Sale</div><div class="small-value">${money(c.netSale)}</div></div>
+              <div><div class="small-label">Realized Profit</div><div class="small-value ${cls}">${money(c.profit)}</div></div>
+            </div>
+
+            <div class="stock-actions">
+              <button class="secondary" onclick="openSoldModal('${stock.id}')">Edit</button>
+              <button class="danger" onclick="deleteSold('${stock.id}')">Delete</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderSummary() {
+      let activeValue = 0;
+      let activeCost = 0;
+      let unrealized = 0;
+      let realized = 0;
+
+      state.stocks.forEach(stock => {
+        const c = calculateActive(stock);
+        activeValue += c.currentValue;
+        activeCost += c.totalCost;
+        unrealized += c.profit;
+      });
+
+      state.soldStocks.forEach(stock => {
+        realized += calculateSold(stock).profit;
+      });
+
+      setMetric("activeValue", money(activeValue));
+      setMetric("activeCost", money(activeCost));
+      setMetric("unrealizedProfit", money(unrealized), unrealized);
+      setMetric("realizedProfit", money(realized), realized);
+      setMetric("totalProfit", money(unrealized + realized), unrealized + realized);
+    }
+
+    function setMetric(id, text, signValue = null) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.classList.remove("positive","negative");
+      if (signValue !== null) el.classList.add(signValue >= 0 ? "positive" : "negative");
+    }
+
+    function openStockModal(id = null) {
+      editingActiveId = id;
+      document.getElementById("purchaseRows").innerHTML = "";
+
+      if (id) {
+        const stock = state.stocks.find(s => s.id === id);
+        if (!stock) return;
+        document.getElementById("stockModalTitle").textContent = "Edit Active Stock";
+        document.getElementById("tickerInput").value = stock.ticker;
+        document.getElementById("nameInput").value = stock.name || "";
+        document.getElementById("currentPriceInput").value = stock.currentPrice;
+        document.getElementById("saleCommissionInput").value = stock.saleCommission;
+        stock.purchases.forEach(addPurchaseRow);
+      } else {
+        document.getElementById("stockModalTitle").textContent = "Add Active Stock";
+        document.getElementById("tickerInput").value = "";
+        document.getElementById("nameInput").value = "";
+        document.getElementById("currentPriceInput").value = "";
+        document.getElementById("saleCommissionInput").value = state.settings.defaultSellCommission;
+        addPurchaseRow();
+      }
+
+      document.getElementById("stockModal").classList.add("open");
+    }
+
+    function closeStockModal() {
+      document.getElementById("stockModal").classList.remove("open");
+      editingActiveId = null;
+    }
+
+    function addPurchaseRow(p = {}) {
+      addPurchaseRowTo("purchaseRows", p);
+    }
+
+    function addSoldPurchaseRow(p = {}) {
+      addPurchaseRowTo("soldPurchaseRows", p);
+    }
+
+    function addPurchaseRowTo(containerId, p = {}) {
+      const row = document.createElement("div");
+      row.className = "purchase-row";
+      row.innerHTML = `
+        <div class="wide">
+          <label>Price per Share</label>
+          <input class="p-price" type="number" min="0" step="0.01" value="${p.price ?? ""}">
+        </div>
+        <div>
+          <label>Shares</label>
+          <input class="p-qty" type="number" min="0" step="0.0001" value="${p.quantity ?? 1}">
+        </div>
+        <div>
+          <label>Commission</label>
+          <input class="p-commission" type="number" min="0" step="0.01" value="${p.commission ?? state.settings.defaultBuyCommission}">
+        </div>
+        <button class="danger" type="button" onclick="this.parentElement.remove()">Remove</button>
+      `;
+      document.getElementById(containerId).appendChild(row);
+    }
+
+    function collectPurchases(containerId) {
+      return [...document.querySelectorAll(`#${containerId} .purchase-row`)].map(row => ({
+        price: Number(row.querySelector(".p-price").value),
+        quantity: Number(row.querySelector(".p-qty").value),
+        commission: Number(row.querySelector(".p-commission").value)
+      })).filter(p => p.price >= 0 && p.quantity > 0 && p.commission >= 0);
+    }
+
+    function saveStock() {
+      const ticker = document.getElementById("tickerInput").value.trim().toUpperCase();
+      const name = document.getElementById("nameInput").value.trim();
+      const currentPrice = Number(document.getElementById("currentPriceInput").value);
+      const saleCommission = Number(document.getElementById("saleCommissionInput").value);
+      const purchases = collectPurchases("purchaseRows");
+
+      if (!ticker) return alert("Enter a ticker.");
+      if (!purchases.length) return alert("Enter at least one valid purchase.");
+
+      const stock = {
+        id: editingActiveId || uid(),
+        ticker,
+        name,
+        currentPrice: currentPrice >= 0 ? currentPrice : 0,
+        saleCommission: saleCommission >= 0 ? saleCommission : 0,
+        purchases
+      };
+
+      if (editingActiveId) {
+        const i = state.stocks.findIndex(s => s.id === editingActiveId);
+        state.stocks[i] = stock;
+      } else {
+        state.stocks.push(stock);
+      }
+
+      saveState();
+      closeStockModal();
+      render();
+    }
+
+    function openSoldModal(id = null) {
+      editingSoldId = id;
+      document.getElementById("soldPurchaseRows").innerHTML = "";
+
+      if (id) {
+        const stock = state.soldStocks.find(s => s.id === id);
+        if (!stock) return;
+        document.getElementById("soldModalTitle").textContent = "Edit Sold Stock";
+        document.getElementById("soldTickerInput").value = stock.ticker;
+        document.getElementById("soldNameInput").value = stock.name || "";
+        document.getElementById("soldPriceInput").value = stock.salePrice;
+        document.getElementById("soldSaleCommissionInput").value = stock.saleCommission;
+        stock.purchases.forEach(addSoldPurchaseRow);
+      } else {
+        document.getElementById("soldModalTitle").textContent = "Add Sold Stock";
+        document.getElementById("soldTickerInput").value = "";
+        document.getElementById("soldNameInput").value = "";
+        document.getElementById("soldPriceInput").value = "";
+        document.getElementById("soldSaleCommissionInput").value = state.settings.defaultSellCommission;
+        addSoldPurchaseRow();
+      }
+
+      document.getElementById("soldModal").classList.add("open");
+    }
+
+    function closeSoldModal() {
+      document.getElementById("soldModal").classList.remove("open");
+      editingSoldId = null;
+    }
+
+    function saveSoldStock() {
+      const ticker = document.getElementById("soldTickerInput").value.trim().toUpperCase();
+      const name = document.getElementById("soldNameInput").value.trim();
+      const salePrice = Number(document.getElementById("soldPriceInput").value);
+      const saleCommission = Number(document.getElementById("soldSaleCommissionInput").value);
+      const purchases = collectPurchases("soldPurchaseRows");
+
+      if (!ticker) return alert("Enter a ticker.");
+      if (!(salePrice >= 0)) return alert("Enter a valid sale price.");
+      if (!purchases.length) return alert("Enter at least one valid purchase.");
+
+      const stock = {
+        id: editingSoldId || uid(),
+        ticker,
+        name,
+        salePrice,
+        saleCommission: saleCommission >= 0 ? saleCommission : 0,
+        purchases
+      };
+
+      if (editingSoldId) {
+        const i = state.soldStocks.findIndex(s => s.id === editingSoldId);
+        state.soldStocks[i] = stock;
+      } else {
+        state.soldStocks.push(stock);
+      }
+
+      saveState();
+      closeSoldModal();
+      render();
+    }
+
+    function moveToSold(id) {
+      const stock = state.stocks.find(s => s.id === id);
+      if (!stock) return;
+
+      const value = prompt(`Enter sale price per share for ${stock.ticker}:`, stock.currentPrice);
+      if (value === null) return;
+      const salePrice = Number(value);
+      if (!Number.isFinite(salePrice) || salePrice < 0) return alert("Enter a valid sale price.");
+
+      state.soldStocks.push({
+        id: uid(),
+        ticker: stock.ticker,
+        name: stock.name,
+        salePrice,
+        saleCommission: stock.saleCommission,
+        purchases: stock.purchases
+      });
+
+      state.stocks = state.stocks.filter(s => s.id !== id);
+      saveState();
+      render();
+    }
+
+    function quickPrice(id) {
+      const stock = state.stocks.find(s => s.id === id);
+      if (!stock) return;
+      const value = prompt(`Enter current price for ${stock.ticker}:`, stock.currentPrice);
+      if (value === null) return;
+      const price = Number(value);
+      if (!Number.isFinite(price) || price < 0) return alert("Enter a valid price.");
+      stock.currentPrice = price;
+      saveState();
+      render();
+    }
+
+    function deleteActive(id) {
+      const stock = state.stocks.find(s => s.id === id);
+      if (!stock || !confirm(`Delete active holding ${stock.ticker}?`)) return;
+      state.stocks = state.stocks.filter(s => s.id !== id);
+      saveState();
+      render();
+    }
+
+    function deleteSold(id) {
+      const stock = state.soldStocks.find(s => s.id === id);
+      if (!stock || !confirm(`Delete sold position ${stock.ticker}?`)) return;
+      state.soldStocks = state.soldStocks.filter(s => s.id !== id);
+      saveState();
+      render();
+    }
+
+    function openSettings() {
+      document.getElementById("currencySelect").value = state.settings.currency;
+      document.getElementById("defaultBuyCommission").value = state.settings.defaultBuyCommission;
+      document.getElementById("defaultSellCommission").value = state.settings.defaultSellCommission;
+      document.getElementById("settingsModal").classList.add("open");
+    }
+
+    function closeSettings() {
+      document.getElementById("settingsModal").classList.remove("open");
+    }
+
+    function saveSettings() {
+      state.settings.currency = document.getElementById("currencySelect").value;
+      state.settings.defaultBuyCommission = Number(document.getElementById("defaultBuyCommission").value) || 0;
+      state.settings.defaultSellCommission = Number(document.getElementById("defaultSellCommission").value) || 0;
+      saveState();
+      closeSettings();
+      render();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state,null,2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "stock-portfolio-backup.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = normalizeState(JSON.parse(reader.result));
+          state = imported;
+          saveState();
+          render();
+          alert("Backup imported.");
+        } catch {
+          alert("This backup file is not valid.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function clearAll() {
+      if (!confirm("Delete all active and sold stock records?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = defaultState();
+      saveState();
+      render();
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme") || "light";
+      const next = current === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      localStorage.setItem(THEME_KEY, next);
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      const preferred = window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", saved || preferred);
+    }
+
+    function formatNumber(n) {
+      return Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 4 });
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    initTheme();
+    render();
+  </script>
+</body>
+</html>
