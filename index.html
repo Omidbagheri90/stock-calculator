@@ -34,7 +34,7 @@
 
 <div id="stockModal" class="modal"><div class="sheet">
 <div class="mhead"><h3 id="stockTitle">Add Stock</h3><button class="secondary" onclick="closeStock()">Close</button></div>
-<div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01" readonly title="Update this value from the Prices tab"></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
+<div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01" min="0"><div class="sub">Saving this price updates the same ticker in every account.</div></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
 <div class="rows"><h3>Purchases</h3><div id="purchaseRows"></div><button class="secondary" onclick="addPurchase()">+ Add Purchase</button></div>
 <div class="rows"><h3>Sales</h3><div id="saleRows"></div><button class="secondary" onclick="addSale()">+ Add Sale</button></div>
 <div class="mact"><button class="secondary" onclick="closeStock()">Cancel</button><button class="primary" onclick="saveStock()">Save Stock</button></div>
@@ -47,7 +47,7 @@
 <div class="mhead"><h3>Shared Current Prices</h3><button class="secondary" onclick="closePrices()">Close</button></div>
 <div class="sub" style="margin-top:8px">Update each ticker once. The new price is applied to that ticker in every account.</div>
 <div id="priceRows" style="margin-top:14px"></div>
-<div class="mact"><button class="primary" onclick="savePrices()">Save All Prices</button></div>
+<div class="mact"><button class="secondary" onclick="addPriceRow()">+ Add Ticker</button><button class="primary" onclick="savePrices()">Save All Prices</button></div>
 </div></div>
 
 <div id="settingsModal" class="modal"><div class="sheet"><div class="mhead"><h3>Settings</h3><button class="secondary" onclick="closeSettings()">Close</button></div><div class="form"><div><label>Currency</label><select id="currency"><option>CAD</option><option>USD</option><option>EUR</option><option>GBP</option></select></div><div><label>Default Buy Commission</label><input id="defaultBuy" type="number" step="0.01"></div><div><label>Default Sell Commission</label><input id="defaultSell" type="number" step="0.01"></div></div><div class="mact"><button class="primary" onclick="saveSettings()">Save</button></div></div></div>
@@ -99,7 +99,7 @@ function renderStocks(){let q=search.value.trim().toLowerCase(),ss=(acc()?.stock
 function card(s){let c=calc(s),t=c.realized+(c.complete?0:c.unrealized),cl=t>=0?"positive":"negative";return `<div class="card stock"><div class="head"><div><div class="ticker">${esc(s.ticker)}</div><div class="name">${esc(s.name||"")}</div></div><div class="chip ${cl}">${money(t)}</div></div><div class="grid"><div><div class="sl">Bought</div><div class="sv">${fmt(c.bought)}</div></div><div><div class="sl">Sold</div><div class="sv">${fmt(c.sold)}</div></div><div><div class="sl">Remaining</div><div class="sv">${fmt(c.remaining)}</div></div><div><div class="sl">Current Price</div><div class="sv">${money(Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0))}</div></div><div><div class="sl">Avg Buy / Share</div><div class="sv">${money(c.avgBuy)}</div></div><div><div class="sl">Total Purchase Cost</div><div class="sv">${money(c.totalCost)}</div></div><div><div class="sl">Break-Even</div><div class="sv">${c.complete?"—":money(c.breakEven)}</div></div><div><div class="sl">Realized</div><div class="sv ${c.realized>=0?"positive":"negative"}">${money(c.realized)}</div></div><div><div class="sl">Unrealized</div><div class="sv ${c.unrealized>=0?"positive":"negative"}">${c.complete?"—":money(c.unrealized)}</div></div></div><div class="actions">${c.complete?"":`<button class="secondary" onclick="quickPrice('${s.id}')">Update Price</button>`}<button class="secondary" onclick="openStock('${s.id}')">${c.complete?"View / Edit":"Buy / Sell / Edit"}</button><button class="danger" onclick="deleteStock('${s.id}')">Delete</button></div></div>`}
 function renderSummary(){let av=0,ac=0,u=0,r=0;(acc()?.stocks||[]).forEach(s=>{let c=calc(s);av+=c.activeValue;ac+=c.activeCost;u+=c.complete?0:c.unrealized;r+=c.realized});setM("activeValue",money(av));setM("activeCost",money(ac));setM("unrealized",money(u),u);setM("realized",money(r),r);setM("totalProfit",money(u+r),u+r)}
 function setM(id,t,s=null){let e=document.getElementById(id);e.textContent=t;e.classList.remove("positive","negative");if(s!==null)e.classList.add(s>=0?"positive":"negative")}
-function openStock(id=null){editingId=id;purchaseRows.innerHTML="";saleRows.innerHTML="";if(id){let s=acc().stocks.find(x=>x.id===id);stockTitle.textContent="Update Stock";ticker.value=s.ticker;company.value=s.name||"";currentPrice.value=Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0);saleCommission.value=s.saleCommission??state.settings.defaultSell;s.purchases.forEach(addPurchase);(s.sales||[]).forEach(addSale)}else{stockTitle.textContent="Add Stock";ticker.value="";company.value="";currentPrice.value="Managed in Prices tab";saleCommission.value=state.settings.defaultSell;addPurchase()}stockModal.classList.add("open")}
+function openStock(id=null){editingId=id;purchaseRows.innerHTML="";saleRows.innerHTML="";if(id){let s=acc().stocks.find(x=>x.id===id);stockTitle.textContent="Update Stock";ticker.value=s.ticker;company.value=s.name||"";currentPrice.value=Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0);saleCommission.value=s.saleCommission??state.settings.defaultSell;s.purchases.forEach(addPurchase);(s.sales||[]).forEach(addSale)}else{stockTitle.textContent="Add Stock";ticker.value="";company.value="";currentPrice.value="";saleCommission.value=state.settings.defaultSell;addPurchase()}stockModal.classList.add("open")}
 function closeStock(){stockModal.classList.remove("open");editingId=null}
 function addPurchase(p={}){addRow("purchaseRows","Buy",p,state.settings.defaultBuy)}
 function addSale(p={}){addRow("saleRows","Sell",p,state.settings.defaultSell)}
@@ -120,26 +120,17 @@ function updateRowTotal(row){
 }
 function collect(id){return [...document.querySelectorAll(`#${id} .row`)].map(r=>({price:Number(r.querySelector(".rp").value),quantity:Number(r.querySelector(".rq").value),commission:Number(r.querySelector(".rc").value)})).filter(x=>x.price>=0&&x.quantity>0&&x.commission>=0)}
 function saveStock(){
-  let t=ticker.value.trim().toUpperCase(),p=collect("purchaseRows"),s=collect("saleRows");
+  let t=ticker.value.trim().toUpperCase(),p=collect("purchaseRows"),s=collect("saleRows"),enteredPrice=Number(currentPrice.value);
   if(!t)return alert("Enter a ticker.");
   if(!p.length)return alert("Enter at least one purchase.");
   let b=p.reduce((x,y)=>x+y.quantity,0),sd=s.reduce((x,y)=>x+y.quantity,0);
   if(sd>b+1e-9)return alert("Sold shares cannot exceed purchased shares.");
+  if(!Number.isFinite(enteredPrice)||enteredPrice<0)return alert("Enter a valid current price.");
   if(!state.sharedPrices)state.sharedPrices={};
-  if(state.sharedPrices[t]===undefined)state.sharedPrices[t]=0;
-  let o={
-    id:editingId||uid(),
-    ticker:t,
-    name:company.value.trim(),
-    currentPrice:state.sharedPrices[t],
-    saleCommission:Number(saleCommission.value)||0,
-    purchases:p,
-    sales:s
-  };
-  if(editingId){
-    let i=acc().stocks.findIndex(x=>x.id===editingId);
-    acc().stocks[i]=o;
-  }else acc().stocks.push(o);
+  state.sharedPrices[t]=enteredPrice;
+  state.accounts.forEach(a=>(a.stocks||[]).forEach(st=>{if((st.ticker||"").toUpperCase()===t)st.currentPrice=enteredPrice;}));
+  let o={id:editingId||uid(),ticker:t,name:company.value.trim(),currentPrice:enteredPrice,saleCommission:Number(saleCommission.value)||0,purchases:p,sales:s};
+  if(editingId){let i=acc().stocks.findIndex(x=>x.id===editingId);acc().stocks[i]=o}else acc().stocks.push(o);
   save();closeStock();render();
 }
 function quickPrice(id){
@@ -163,32 +154,36 @@ function allTickers(){
   Object.keys(state.sharedPrices||{}).forEach(t=>set.add(t.toUpperCase()));
   return [...set].sort();
 }
+function priceRowHtml(tickerValue="",priceValue=""){
+  return `<div class="card price-row"><div><label>Ticker</label><input class="shared-ticker-input" maxlength="12" value="${esc(tickerValue)}" placeholder="e.g. MU"></div><div><label>Current Price per Share</label><input class="shared-price-input" type="number" step="0.01" min="0" value="${priceValue}" placeholder="e.g. 145.50"></div></div>`;
+}
 function openPrices(focusTicker=null){
   if(!state.sharedPrices)state.sharedPrices={};
   const tickers=allTickers();
-  priceRows.innerHTML=tickers.length?tickers.map(t=>`
-    <div class="card price-row">
-      <div><label>Ticker</label><input value="${esc(t)}" readonly></div>
-      <div><label>Current Price per Share</label><input class="shared-price-input" data-ticker="${esc(t)}" type="number" step="0.01" min="0" value="${Number(state.sharedPrices[t]??0)}"></div>
-    </div>`).join(""):'<div class="empty">Add a stock first, then its ticker will appear here.</div>';
+  priceRows.innerHTML=tickers.length?tickers.map(t=>priceRowHtml(t,Number(state.sharedPrices[t]??0))).join(""):priceRowHtml("","");
   pricesModal.classList.add("open");
-  if(focusTicker){
-    setTimeout(()=>{
-      const el=[...document.querySelectorAll(".shared-price-input")].find(x=>x.dataset.ticker===focusTicker.toUpperCase());
-      if(el){el.focus();el.select();}
-    },50);
-  }
+  if(focusTicker){setTimeout(()=>{const rows=[...document.querySelectorAll("#priceRows .price-row")];const row=rows.find(r=>r.querySelector(".shared-ticker-input").value.trim().toUpperCase()===focusTicker.toUpperCase());if(row){const input=row.querySelector(".shared-price-input");input.focus();input.select();}},50);}
+}
+function addPriceRow(){
+  priceRows.insertAdjacentHTML("beforeend",priceRowHtml("",""));
+  const rows=document.querySelectorAll("#priceRows .price-row");
+  rows[rows.length-1].querySelector(".shared-ticker-input").focus();
 }
 function closePrices(){pricesModal.classList.remove("open")}
 function savePrices(){
-  document.querySelectorAll(".shared-price-input").forEach(el=>{
-    const v=Number(el.value);
-    if(Number.isFinite(v)&&v>=0)state.sharedPrices[el.dataset.ticker]=v;
-  });
-  state.accounts.forEach(a=>(a.stocks||[]).forEach(s=>{
-    const t=(s.ticker||"").toUpperCase();
-    if(state.sharedPrices[t]!==undefined)s.currentPrice=state.sharedPrices[t];
-  }));
+  if(!state.sharedPrices)state.sharedPrices={};
+  const newPrices={...state.sharedPrices};
+  const seen=new Set();
+  for(const row of document.querySelectorAll("#priceRows .price-row")){
+    const ticker=row.querySelector(".shared-ticker-input").value.trim().toUpperCase();
+    const price=Number(row.querySelector(".shared-price-input").value);
+    if(!ticker)continue;
+    if(seen.has(ticker)){alert(`Ticker ${ticker} is listed more than once.`);return;}
+    if(!Number.isFinite(price)||price<0){alert(`Enter a valid price for ${ticker}.`);return;}
+    seen.add(ticker);newPrices[ticker]=price;
+  }
+  state.sharedPrices=newPrices;
+  state.accounts.forEach(a=>(a.stocks||[]).forEach(s=>{const t=(s.ticker||"").toUpperCase();if(state.sharedPrices[t]!==undefined)s.currentPrice=state.sharedPrices[t];}));
   save();closePrices();render();
 }
 function openSettings(){currency.value=state.settings.currency;defaultBuy.value=state.settings.defaultBuy;defaultSell.value=state.settings.defaultSell;settingsModal.classList.add("open")}function closeSettings(){settingsModal.classList.remove("open")}
