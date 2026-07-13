@@ -9,7 +9,7 @@
 <style>
 :root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#d9e0ea;--accent:#2563eb;--green:#087443;--greenbg:#ecfdf3;--red:#b42318;--redbg:#fef3f2}
 [data-theme=dark]{--bg:#0b1220;--card:#111827;--text:#f8fafc;--muted:#9ca3af;--line:#2b3648;--accent:#60a5fa;--green:#34d399;--greenbg:#0d2a22;--red:#fb7185;--redbg:#32151a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.app{max-width:1100px;margin:auto;padding:18px 14px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.top h1{margin:0;font-size:32px}.sub{color:var(--muted);font-size:13px;margin-top:4px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px}.tabs{display:flex;gap:8px;overflow:auto;padding:12px;margin:16px 0}.tab,.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.tab.active,.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button{border:0;border-radius:11px;padding:11px 14px;font-weight:800;cursor:pointer}.tab{white-space:nowrap}.theme{width:44px;height:44px;background:var(--card);color:var(--text);border:1px solid var(--line);font-size:20px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.metric{padding:15px}.lab{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}.val{font-size:21px;font-weight:900;margin-top:7px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}.toolbar{display:grid;grid-template-columns:1fr auto auto auto;gap:9px;padding:12px;margin:15px 0}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--text);font-size:15px}.section{margin:22px 2px 10px}.section h2{margin:0;font-size:20px}.section p{margin:3px 0 0;color:var(--muted);font-size:12px}.list{display:grid;gap:12px}.stock{padding:16px}.head{display:flex;justify-content:space-between;gap:10px}.ticker{font-size:22px;font-weight:950}.name{color:var(--muted);font-size:13px}.chip{padding:7px 10px;border-radius:999px;font-weight:900}.chip.positive{background:var(--greenbg)}.chip.negative{background:var(--redbg)}.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:13px}.sl{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase}.sv{font-size:14px;font-weight:850;margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.danger{background:var(--redbg);color:var(--red)}.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;background:var(--card)}.modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.6);z-index:20;align-items:end;justify-content:center;padding:12px}.modal.open{display:flex}.sheet{width:min(780px,100%);max-height:92vh;overflow:auto;background:var(--card);border-radius:22px;padding:18px}.mhead{display:flex;justify-content:space-between;align-items:center}.mhead h3{margin:0}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:14px}label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}.rows{margin-top:15px;border-top:1px solid var(--line);padding-top:14px}.row{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px}.row-total{padding:12px;border:1px solid var(--line);border-radius:11px;font-weight:900;background:var(--bg);white-space:nowrap}.mact{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.account-row{display:flex;gap:8px;align-items:center;padding:10px;margin:8px 0}.footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.app{max-width:1100px;margin:auto;padding:18px 14px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.top h1{margin:0;font-size:32px}.sub{color:var(--muted);font-size:13px;margin-top:4px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px}.tabs{display:flex;gap:8px;overflow:auto;padding:12px;margin:16px 0}.tab,.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.tab.active,.primary{background:var(--accent);color:#fff;border-color:var(--accent)}button{border:0;border-radius:11px;padding:11px 14px;font-weight:800;cursor:pointer}.tab{white-space:nowrap}.theme{width:44px;height:44px;background:var(--card);color:var(--text);border:1px solid var(--line);font-size:20px}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.metric{padding:15px}.lab{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase}.val{font-size:21px;font-weight:900;margin-top:7px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}.toolbar{display:grid;grid-template-columns:1fr auto auto auto auto;gap:9px;padding:12px;margin:15px 0}input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--text);font-size:15px}.section{margin:22px 2px 10px}.section h2{margin:0;font-size:20px}.section p{margin:3px 0 0;color:var(--muted);font-size:12px}.list{display:grid;gap:12px}.stock{padding:16px}.head{display:flex;justify-content:space-between;gap:10px}.ticker{font-size:22px;font-weight:950}.name{color:var(--muted);font-size:13px}.chip{padding:7px 10px;border-radius:999px;font-weight:900}.chip.positive{background:var(--greenbg)}.chip.negative{background:var(--redbg)}.grid{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;margin-top:13px}.sl{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase}.sv{font-size:14px;font-weight:850;margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.danger{background:var(--redbg);color:var(--red)}.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;background:var(--card)}.modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.6);z-index:20;align-items:end;justify-content:center;padding:12px}.modal.open{display:flex}.sheet{width:min(780px,100%);max-height:92vh;overflow:auto;background:var(--card);border-radius:22px;padding:18px}.mhead{display:flex;justify-content:space-between;align-items:center}.mhead h3{margin:0}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:14px}label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}.rows{margin-top:15px;border-top:1px solid var(--line);padding-top:14px}.row{display:grid;grid-template-columns:1.2fr .8fr .8fr 1fr auto;gap:8px;align-items:end;margin-bottom:8px}.row-total{padding:12px;border:1px solid var(--line);border-radius:11px;font-weight:900;background:var(--bg);white-space:nowrap}.mact{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.account-row{display:flex;gap:8px;align-items:center;padding:10px;margin:8px 0}.price-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;padding:11px;margin:8px 0}.footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
 @media(max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row .wide{grid-column:1/-1}}
 </style>
 </head>
@@ -24,7 +24,7 @@
 <div class="card metric"><div class="lab">Realized</div><div id="realized" class="val">$0.00</div></div>
 <div class="card metric"><div class="lab">Total Profit</div><div id="totalProfit" class="val">$0.00</div></div>
 </div>
-<div class="card toolbar"><input id="search" placeholder="Search ticker or company..." oninput="renderStocks()"><button class="secondary" onclick="openAccounts()">Accounts</button><button class="secondary" onclick="openSettings()">Settings</button><button class="primary" onclick="openStock()">+ Add Stock</button></div>
+<div class="card toolbar"><input id="search" placeholder="Search ticker or company..." oninput="renderStocks()"><button class="secondary" onclick="openAccounts()">Accounts</button><button class="secondary" onclick="openPrices()">Prices</button><button class="secondary" onclick="openSettings()">Settings</button><button class="primary" onclick="openStock()">+ Add Stock</button></div>
 <div class="section"><h2>Under Consideration</h2><p>Active or partially sold positions in the selected account.</p></div>
 <div id="activeList" class="list"></div>
 <div class="section"><h2>Completely Sold</h2><p>Automatically moved here. Original capital is excluded; realized profit remains.</p></div>
@@ -34,7 +34,7 @@
 
 <div id="stockModal" class="modal"><div class="sheet">
 <div class="mhead"><h3 id="stockTitle">Add Stock</h3><button class="secondary" onclick="closeStock()">Close</button></div>
-<div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01"></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
+<div class="form"><div><label>Ticker</label><input id="ticker"></div><div><label>Company Name</label><input id="company"></div><div><label>Current Price per Share</label><input id="currentPrice" type="number" step="0.01" readonly title="Update this value from the Prices tab"></div><div><label>Estimated Final Sale Commission</label><input id="saleCommission" type="number" step="0.01"></div></div>
 <div class="rows"><h3>Purchases</h3><div id="purchaseRows"></div><button class="secondary" onclick="addPurchase()">+ Add Purchase</button></div>
 <div class="rows"><h3>Sales</h3><div id="saleRows"></div><button class="secondary" onclick="addSale()">+ Add Sale</button></div>
 <div class="mact"><button class="secondary" onclick="closeStock()">Cancel</button><button class="primary" onclick="saveStock()">Save Stock</button></div>
@@ -42,26 +42,64 @@
 
 <div id="accountsModal" class="modal"><div class="sheet"><div class="mhead"><h3>Manage Accounts</h3><button class="secondary" onclick="closeAccounts()">Close</button></div><div id="accountRows"></div><div class="mact"><button class="primary" onclick="addAccount()">+ Add Account</button></div></div></div>
 
+
+<div id="pricesModal" class="modal"><div class="sheet">
+<div class="mhead"><h3>Shared Current Prices</h3><button class="secondary" onclick="closePrices()">Close</button></div>
+<div class="sub" style="margin-top:8px">Update each ticker once. The new price is applied to that ticker in every account.</div>
+<div id="priceRows" style="margin-top:14px"></div>
+<div class="mact"><button class="primary" onclick="savePrices()">Save All Prices</button></div>
+</div></div>
+
 <div id="settingsModal" class="modal"><div class="sheet"><div class="mhead"><h3>Settings</h3><button class="secondary" onclick="closeSettings()">Close</button></div><div class="form"><div><label>Currency</label><select id="currency"><option>CAD</option><option>USD</option><option>EUR</option><option>GBP</option></select></div><div><label>Default Buy Commission</label><input id="defaultBuy" type="number" step="0.01"></div><div><label>Default Sell Commission</label><input id="defaultSell" type="number" step="0.01"></div></div><div class="mact"><button class="primary" onclick="saveSettings()">Save</button></div></div></div>
 
 <script>
 const KEY="stockAccountTrackerV4",OLD3="stockPortfolioTrackerV3",OLD2="stockPortfolioTrackerV2",THEME="stockPortfolioTheme";
 let editingId=null,state=loadState();
 function uid(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())}
-function base(){let a=[{id:uid(),name:"TFSA",stocks:[]},{id:uid(),name:"FHSA",stocks:[]},{id:uid(),name:"Other",stocks:[]}];return{settings:{currency:"CAD",defaultBuy:6.95,defaultSell:6.95},accounts:a,activeAccountId:a[0].id}}
-function loadState(){try{let r=localStorage.getItem(KEY);if(r)return JSON.parse(r);let d=base(),o=localStorage.getItem(OLD3)||localStorage.getItem(OLD2);if(o){o=JSON.parse(o);d.settings={currency:o.settings?.currency||"CAD",defaultBuy:o.settings?.defaultBuyCommission??6.95,defaultSell:o.settings?.defaultSellCommission??6.95};d.accounts[0].stocks=(o.stocks||[]).map(x=>({...x,sales:[]}));if(o.soldStocks)d.accounts[0].stocks.push(...o.soldStocks.map(x=>({id:x.id||uid(),ticker:x.ticker,name:x.name||"",currentPrice:x.salePrice||0,saleCommission:x.saleCommission||0,purchases:x.purchases||[],sales:[{price:x.salePrice||0,quantity:(x.purchases||[]).reduce((s,p)=>s+Number(p.quantity||0),0),commission:x.saleCommission||0}]})))}localStorage.setItem(KEY,JSON.stringify(d));return d}catch{return base()}}
+function base(){let a=[{id:uid(),name:"TFSA",stocks:[]},{id:uid(),name:"FHSA",stocks:[]},{id:uid(),name:"Other",stocks:[]}];return{settings:{currency:"CAD",defaultBuy:6.95,defaultSell:6.95},accounts:a,activeAccountId:a[0].id,sharedPrices:{}}}
+function loadState(){
+  try{
+    let r=localStorage.getItem(KEY);
+    if(r){
+      let s=JSON.parse(r);
+      if(!s.sharedPrices)s.sharedPrices={};
+      (s.accounts||[]).forEach(a=>(a.stocks||[]).forEach(st=>{
+        const t=(st.ticker||"").toUpperCase();
+        if(t && s.sharedPrices[t]===undefined && Number.isFinite(Number(st.currentPrice))) s.sharedPrices[t]=Number(st.currentPrice)||0;
+      }));
+      return s;
+    }
+    let d=base(),o=localStorage.getItem(OLD3)||localStorage.getItem(OLD2);
+    if(o){
+      o=JSON.parse(o);
+      d.settings={currency:o.settings?.currency||"CAD",defaultBuy:o.settings?.defaultBuyCommission??6.95,defaultSell:o.settings?.defaultSellCommission??6.95};
+      d.accounts[0].stocks=(o.stocks||[]).map(x=>({...x,sales:[]}));
+      if(o.soldStocks)d.accounts[0].stocks.push(...o.soldStocks.map(x=>({
+        id:x.id||uid(),ticker:x.ticker,name:x.name||"",currentPrice:x.salePrice||0,
+        saleCommission:x.saleCommission||0,purchases:x.purchases||[],
+        sales:[{price:x.salePrice||0,quantity:(x.purchases||[]).reduce((s,p)=>s+Number(p.quantity||0),0),commission:x.saleCommission||0}]
+      })));
+      d.accounts[0].stocks.forEach(st=>{
+        const t=(st.ticker||"").toUpperCase();
+        if(t && d.sharedPrices[t]===undefined)d.sharedPrices[t]=Number(st.currentPrice)||0;
+      });
+    }
+    localStorage.setItem(KEY,JSON.stringify(d));
+    return d;
+  }catch{return base()}
+}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function acc(){return state.accounts.find(a=>a.id===state.activeAccountId)||state.accounts[0]}
 function money(v){return new Intl.NumberFormat("en-CA",{style:"currency",currency:state.settings.currency,minimumFractionDigits:2}).format(Number(v)||0)}
-function calc(s){let bought=s.purchases.reduce((x,p)=>x+Number(p.quantity||0),0),sold=(s.sales||[]).reduce((x,p)=>x+Number(p.quantity||0),0),remaining=Math.max(0,bought-sold),buyValue=s.purchases.reduce((x,p)=>x+Number(p.price||0)*Number(p.quantity||0),0),buyComm=s.purchases.reduce((x,p)=>x+Number(p.commission||0),0),totalCost=buyValue+buyComm,avgBuy=bought?buyValue/bought:0,soldCost=bought?totalCost*(sold/bought):0,activeCost=totalCost-soldCost,saleNet=(s.sales||[]).reduce((x,p)=>x+Number(p.price||0)*Number(p.quantity||0)-Number(p.commission||0),0),realized=saleNet-soldCost,activeValue=remaining*Number(s.currentPrice||0),unrealized=activeValue-Number(s.saleCommission||0)-activeCost,breakEven=remaining?(activeCost+Number(s.saleCommission||0))/remaining:0;return{bought,sold,remaining,buyValue,buyComm,totalCost,avgBuy,activeCost,activeValue,realized,unrealized,breakEven,complete:bought>0&&remaining<=1e-9}}
+function calc(s){let bought=s.purchases.reduce((x,p)=>x+Number(p.quantity||0),0),sold=(s.sales||[]).reduce((x,p)=>x+Number(p.quantity||0),0),remaining=Math.max(0,bought-sold),buyValue=s.purchases.reduce((x,p)=>x+Number(p.price||0)*Number(p.quantity||0),0),buyComm=s.purchases.reduce((x,p)=>x+Number(p.commission||0),0),totalCost=buyValue+buyComm,avgBuy=bought?buyValue/bought:0,soldCost=bought?totalCost*(sold/bought):0,activeCost=totalCost-soldCost,saleNet=(s.sales||[]).reduce((x,p)=>x+Number(p.price||0)*Number(p.quantity||0)-Number(p.commission||0),0),realized=saleNet-soldCost,activeValue=remaining*Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0),unrealized=activeValue-Number(s.saleCommission||0)-activeCost,breakEven=remaining?(activeCost+Number(s.saleCommission||0))/remaining:0;return{bought,sold,remaining,buyValue,buyComm,totalCost,avgBuy,activeCost,activeValue,realized,unrealized,breakEven,complete:bought>0&&remaining<=1e-9}}
 function render(){renderTabs();renderStocks();renderSummary()}
 function renderTabs(){tabs.innerHTML=state.accounts.map(a=>`<button class="tab ${a.id===state.activeAccountId?"active":""}" onclick="switchAccount('${a.id}')">${esc(a.name)}</button>`).join("")}
 function switchAccount(id){state.activeAccountId=id;save();render()}
 function renderStocks(){let q=search.value.trim().toLowerCase(),ss=(acc()?.stocks||[]).filter(s=>s.ticker.toLowerCase().includes(q)||(s.name||"").toLowerCase().includes(q)),a=ss.filter(s=>!calc(s).complete),d=ss.filter(s=>calc(s).complete);activeList.innerHTML=a.length?a.map(card).join(""):'<div class="empty">No active positions in this account.</div>';soldList.innerHTML=d.length?d.map(card).join(""):'<div class="empty">No completely sold positions in this account.</div>'}
-function card(s){let c=calc(s),t=c.realized+(c.complete?0:c.unrealized),cl=t>=0?"positive":"negative";return `<div class="card stock"><div class="head"><div><div class="ticker">${esc(s.ticker)}</div><div class="name">${esc(s.name||"")}</div></div><div class="chip ${cl}">${money(t)}</div></div><div class="grid"><div><div class="sl">Bought</div><div class="sv">${fmt(c.bought)}</div></div><div><div class="sl">Sold</div><div class="sv">${fmt(c.sold)}</div></div><div><div class="sl">Remaining</div><div class="sv">${fmt(c.remaining)}</div></div><div><div class="sl">Avg Buy / Share</div><div class="sv">${money(c.avgBuy)}</div></div><div><div class="sl">Total Purchase Cost</div><div class="sv">${money(c.totalCost)}</div></div><div><div class="sl">Break-Even</div><div class="sv">${c.complete?"—":money(c.breakEven)}</div></div><div><div class="sl">Realized</div><div class="sv ${c.realized>=0?"positive":"negative"}">${money(c.realized)}</div></div><div><div class="sl">Unrealized</div><div class="sv ${c.unrealized>=0?"positive":"negative"}">${c.complete?"—":money(c.unrealized)}</div></div></div><div class="actions">${c.complete?"":`<button class="secondary" onclick="quickPrice('${s.id}')">Update Price</button>`}<button class="secondary" onclick="openStock('${s.id}')">${c.complete?"View / Edit":"Buy / Sell / Edit"}</button><button class="danger" onclick="deleteStock('${s.id}')">Delete</button></div></div>`}
+function card(s){let c=calc(s),t=c.realized+(c.complete?0:c.unrealized),cl=t>=0?"positive":"negative";return `<div class="card stock"><div class="head"><div><div class="ticker">${esc(s.ticker)}</div><div class="name">${esc(s.name||"")}</div></div><div class="chip ${cl}">${money(t)}</div></div><div class="grid"><div><div class="sl">Bought</div><div class="sv">${fmt(c.bought)}</div></div><div><div class="sl">Sold</div><div class="sv">${fmt(c.sold)}</div></div><div><div class="sl">Remaining</div><div class="sv">${fmt(c.remaining)}</div></div><div><div class="sl">Current Price</div><div class="sv">${money(Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0))}</div></div><div><div class="sl">Avg Buy / Share</div><div class="sv">${money(c.avgBuy)}</div></div><div><div class="sl">Total Purchase Cost</div><div class="sv">${money(c.totalCost)}</div></div><div><div class="sl">Break-Even</div><div class="sv">${c.complete?"—":money(c.breakEven)}</div></div><div><div class="sl">Realized</div><div class="sv ${c.realized>=0?"positive":"negative"}">${money(c.realized)}</div></div><div><div class="sl">Unrealized</div><div class="sv ${c.unrealized>=0?"positive":"negative"}">${c.complete?"—":money(c.unrealized)}</div></div></div><div class="actions">${c.complete?"":`<button class="secondary" onclick="quickPrice('${s.id}')">Update Price</button>`}<button class="secondary" onclick="openStock('${s.id}')">${c.complete?"View / Edit":"Buy / Sell / Edit"}</button><button class="danger" onclick="deleteStock('${s.id}')">Delete</button></div></div>`}
 function renderSummary(){let av=0,ac=0,u=0,r=0;(acc()?.stocks||[]).forEach(s=>{let c=calc(s);av+=c.activeValue;ac+=c.activeCost;u+=c.complete?0:c.unrealized;r+=c.realized});setM("activeValue",money(av));setM("activeCost",money(ac));setM("unrealized",money(u),u);setM("realized",money(r),r);setM("totalProfit",money(u+r),u+r)}
 function setM(id,t,s=null){let e=document.getElementById(id);e.textContent=t;e.classList.remove("positive","negative");if(s!==null)e.classList.add(s>=0?"positive":"negative")}
-function openStock(id=null){editingId=id;purchaseRows.innerHTML="";saleRows.innerHTML="";if(id){let s=acc().stocks.find(x=>x.id===id);stockTitle.textContent="Update Stock";ticker.value=s.ticker;company.value=s.name||"";currentPrice.value=s.currentPrice||0;saleCommission.value=s.saleCommission??state.settings.defaultSell;s.purchases.forEach(addPurchase);(s.sales||[]).forEach(addSale)}else{stockTitle.textContent="Add Stock";ticker.value="";company.value="";currentPrice.value="";saleCommission.value=state.settings.defaultSell;addPurchase()}stockModal.classList.add("open")}
+function openStock(id=null){editingId=id;purchaseRows.innerHTML="";saleRows.innerHTML="";if(id){let s=acc().stocks.find(x=>x.id===id);stockTitle.textContent="Update Stock";ticker.value=s.ticker;company.value=s.name||"";currentPrice.value=Number((state.sharedPrices||{})[(s.ticker||"").toUpperCase()]??s.currentPrice??0);saleCommission.value=s.saleCommission??state.settings.defaultSell;s.purchases.forEach(addPurchase);(s.sales||[]).forEach(addSale)}else{stockTitle.textContent="Add Stock";ticker.value="";company.value="";currentPrice.value="Managed in Prices tab";saleCommission.value=state.settings.defaultSell;addPurchase()}stockModal.classList.add("open")}
 function closeStock(){stockModal.classList.remove("open");editingId=null}
 function addPurchase(p={}){addRow("purchaseRows","Buy",p,state.settings.defaultBuy)}
 function addSale(p={}){addRow("saleRows","Sell",p,state.settings.defaultSell)}
@@ -81,20 +119,85 @@ function updateRowTotal(row){
   row.querySelector(".row-total").textContent=money(total);
 }
 function collect(id){return [...document.querySelectorAll(`#${id} .row`)].map(r=>({price:Number(r.querySelector(".rp").value),quantity:Number(r.querySelector(".rq").value),commission:Number(r.querySelector(".rc").value)})).filter(x=>x.price>=0&&x.quantity>0&&x.commission>=0)}
-function saveStock(){let t=ticker.value.trim().toUpperCase(),p=collect("purchaseRows"),s=collect("saleRows");if(!t)return alert("Enter a ticker.");if(!p.length)return alert("Enter at least one purchase.");let b=p.reduce((x,y)=>x+y.quantity,0),sd=s.reduce((x,y)=>x+y.quantity,0);if(sd>b+1e-9)return alert("Sold shares cannot exceed purchased shares.");let o={id:editingId||uid(),ticker:t,name:company.value.trim(),currentPrice:Number(currentPrice.value)||0,saleCommission:Number(saleCommission.value)||0,purchases:p,sales:s};if(editingId){let i=acc().stocks.findIndex(x=>x.id===editingId);acc().stocks[i]=o}else acc().stocks.push(o);save();closeStock();render()}
-function quickPrice(id){let s=acc().stocks.find(x=>x.id===id),v=prompt(`Current price for ${s.ticker}:`,s.currentPrice);if(v===null)return;v=Number(v);if(!Number.isFinite(v)||v<0)return alert("Enter a valid price.");s.currentPrice=v;save();render()}
+function saveStock(){
+  let t=ticker.value.trim().toUpperCase(),p=collect("purchaseRows"),s=collect("saleRows");
+  if(!t)return alert("Enter a ticker.");
+  if(!p.length)return alert("Enter at least one purchase.");
+  let b=p.reduce((x,y)=>x+y.quantity,0),sd=s.reduce((x,y)=>x+y.quantity,0);
+  if(sd>b+1e-9)return alert("Sold shares cannot exceed purchased shares.");
+  if(!state.sharedPrices)state.sharedPrices={};
+  if(state.sharedPrices[t]===undefined)state.sharedPrices[t]=0;
+  let o={
+    id:editingId||uid(),
+    ticker:t,
+    name:company.value.trim(),
+    currentPrice:state.sharedPrices[t],
+    saleCommission:Number(saleCommission.value)||0,
+    purchases:p,
+    sales:s
+  };
+  if(editingId){
+    let i=acc().stocks.findIndex(x=>x.id===editingId);
+    acc().stocks[i]=o;
+  }else acc().stocks.push(o);
+  save();closeStock();render();
+}
+function quickPrice(id){
+  const s=acc().stocks.find(x=>x.id===id);
+  if(!s)return;
+  openPrices(s.ticker);
+}
 function deleteStock(id){let s=acc().stocks.find(x=>x.id===id);if(confirm(`Delete ${s.ticker} from ${acc().name}?`)){acc().stocks=acc().stocks.filter(x=>x.id!==id);save();render()}}
 function openAccounts(){renderAccountRows();accountsModal.classList.add("open")}function closeAccounts(){accountsModal.classList.remove("open")}
 function renderAccountRows(){accountRows.innerHTML=state.accounts.map(a=>`<div class="card account-row"><input value="${esc(a.name)}" onchange="renameAccount('${a.id}',this.value)"><button class="danger" onclick="removeAccount('${a.id}')">Delete</button></div>`).join("")}
 function addAccount(){let n=prompt("Account name, for example RRSP or Cash:");if(!n?.trim())return;let a={id:uid(),name:n.trim(),stocks:[]};state.accounts.push(a);state.activeAccountId=a.id;save();render();renderAccountRows()}
 function renameAccount(id,n){let a=state.accounts.find(x=>x.id===id);if(a&&n.trim()){a.name=n.trim();save();renderTabs()}}
 function removeAccount(id){if(state.accounts.length===1)return alert("At least one account is required.");let a=state.accounts.find(x=>x.id===id);if(confirm(`Delete account ${a.name} and all its stocks?`)){state.accounts=state.accounts.filter(x=>x.id!==id);if(state.activeAccountId===id)state.activeAccountId=state.accounts[0].id;save();render();renderAccountRows()}}
+
+function allTickers(){
+  const set=new Set();
+  state.accounts.forEach(a=>(a.stocks||[]).forEach(s=>{
+    const t=(s.ticker||"").trim().toUpperCase();
+    if(t)set.add(t);
+  }));
+  Object.keys(state.sharedPrices||{}).forEach(t=>set.add(t.toUpperCase()));
+  return [...set].sort();
+}
+function openPrices(focusTicker=null){
+  if(!state.sharedPrices)state.sharedPrices={};
+  const tickers=allTickers();
+  priceRows.innerHTML=tickers.length?tickers.map(t=>`
+    <div class="card price-row">
+      <div><label>Ticker</label><input value="${esc(t)}" readonly></div>
+      <div><label>Current Price per Share</label><input class="shared-price-input" data-ticker="${esc(t)}" type="number" step="0.01" min="0" value="${Number(state.sharedPrices[t]??0)}"></div>
+    </div>`).join(""):'<div class="empty">Add a stock first, then its ticker will appear here.</div>';
+  pricesModal.classList.add("open");
+  if(focusTicker){
+    setTimeout(()=>{
+      const el=[...document.querySelectorAll(".shared-price-input")].find(x=>x.dataset.ticker===focusTicker.toUpperCase());
+      if(el){el.focus();el.select();}
+    },50);
+  }
+}
+function closePrices(){pricesModal.classList.remove("open")}
+function savePrices(){
+  document.querySelectorAll(".shared-price-input").forEach(el=>{
+    const v=Number(el.value);
+    if(Number.isFinite(v)&&v>=0)state.sharedPrices[el.dataset.ticker]=v;
+  });
+  state.accounts.forEach(a=>(a.stocks||[]).forEach(s=>{
+    const t=(s.ticker||"").toUpperCase();
+    if(state.sharedPrices[t]!==undefined)s.currentPrice=state.sharedPrices[t];
+  }));
+  save();closePrices();render();
+}
 function openSettings(){currency.value=state.settings.currency;defaultBuy.value=state.settings.defaultBuy;defaultSell.value=state.settings.defaultSell;settingsModal.classList.add("open")}function closeSettings(){settingsModal.classList.remove("open")}
 function saveSettings(){state.settings.currency=currency.value;state.settings.defaultBuy=Number(defaultBuy.value)||0;state.settings.defaultSell=Number(defaultSell.value)||0;save();closeSettings();render()}
 function exportData(){let b=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="stock-accounts-backup.json";a.click();URL.revokeObjectURL(u)}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!Array.isArray(x.accounts))throw Error();state=x;save();render();alert("Backup imported.")}catch{alert("Invalid backup file.")}};r.readAsText(f);e.target.value=""}
 function toggleTheme(){let h=document.documentElement,n=(h.getAttribute("data-theme")||"light")==="dark"?"light":"dark";h.setAttribute("data-theme",n);localStorage.setItem(THEME,n)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}function fmt(n){return Number(n||0).toLocaleString(undefined,{maximumFractionDigits:4})}
+if(!state.sharedPrices)state.sharedPrices={};
 document.documentElement.setAttribute("data-theme",localStorage.getItem(THEME)||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"));render();
 </script>
 </body></html>
